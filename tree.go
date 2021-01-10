@@ -119,12 +119,17 @@ func (n *Node) appendSingleChild(c *Node) error {
 		return ErrInvalidNode
 	}
 
+	if c.parent != nil {
+		return ErrNodeAlreadyAttached
+	}
+
 	if !n.Element.CanContain(c.Element) {
 		return ErrChildNotAllowed
 	}
 
 	// if element has child container embedded
 	if container, ok := n.Element.(ChildContainer); ok {
+		c.parent = n
 		container.append(c)
 	} else {
 		return ErrChildNotAllowed
@@ -151,6 +156,14 @@ func (n *Node) IsLeaf() bool {
 		}
 	}
 	return true
+}
+
+func (n *Node) WithChild(child *Node) (this *Node) {
+	err := n.AppendChild(child)
+	if err != nil {
+		panic(err)
+	}
+	return n
 }
 
 type typedNode struct {
@@ -240,9 +253,11 @@ func (n *Node) UnmarshalJSON(data []byte) error {
 	case TypeTitle:
 		elem = NewTitle()
 	case TypePara:
-		elem = NewTitle()
+		elem = NewParagraph()
 	case TypeText:
 		elem = NewText()
+	case TypeLink:
+		elem = NewLink()
 	default:
 	}
 	err = json.Unmarshal(data, elem)
@@ -294,9 +309,11 @@ func (n *Node) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	case TypeTitle:
 		elem = NewTitle()
 	case TypePara:
-		elem = NewTitle()
+		elem = NewParagraph()
 	case TypeText:
 		elem = NewText()
+	case TypeLink:
+		elem = NewLink()
 	default:
 	}
 	err := d.DecodeElement(elem, &start)
@@ -308,6 +325,10 @@ func (n *Node) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	if cc, ok := elem.(ChildContainer); ok {
 		c := (Children)(cc.GetChildren())
 		for _, cNode := range c {
+			// check if this can be valid child as per schema
+			if !elem.CanContain(cNode.Element) {
+				return errors.Wrapf(ErrChildNotAllowed, "invalid child '%s' for parent '%s'", cNode.Element.GetType(), n.Element.GetType())
+			}
 			cNode.parent = n // I am your parent
 		}
 	}

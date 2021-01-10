@@ -4,6 +4,7 @@ Structured Document Content Schema implementation
 
 ## Implemented Elements
 
+
 ### Page `<page />`
 
 ### Title `<title />`
@@ -12,119 +13,38 @@ Structured Document Content Schema implementation
 
 ## Schema
 
-```
-<page type="article" version="1" lang="en" state="draft">
-    <title>Always inner text without formatting</title>
-    <summary display="off">
-        <!-- similar to p -->
-    </summary>
-    <h1 ruler="true">
-        <text>Header Text</text>
-        <link href="">
-            <text href="">can also contain link</text>
-        </link>
-    </h1>
+[XML Schema](extra/schema.ref.xml)
 
-    <h2 ruler="false">
-        <text>Always inner text without formatting</text>
-        <link href="">or some link</link>
-    </h2>
+[JSON Schema](extra/schema.ref.json)
 
-    <h3 ruler="false">
-        <text>Inner Text </text>
-        <link href="">Some link</link>
-    </h3>
+## Implementing a new Element
 
-    <p>
-        <!-- paragraph can contain one or more text, link or inline code node -->
-        <text bold="true" italics="true" underline="false" strikethrough="false">This is  bold and italics text</text>
-        <text>with an unformatted text</text>
-        <link href="http://www.somewhere.com/">
-            <text>and a Link text</text>
-        </link>
-        <kbd> and keyboard</kbd>
-    </p>
-    <p>
-        <text>Some </text>
-        <text bold="true">Very Important</text>
-        <text> text</text>
-    </p>
+- A new element should satisfy interface `Element`
+- It's mapping entry should be in `schema` map in `schema.go`.
+- In `tree.go`, add its entry in `switch` inside marshal and unmarshal.
+- Any data directly related to element should be its `struct` attribute. Example -
+  ```go
+  type Text struct {
+    Text string
+    Bold bool
+  } 
+  ```
+- If element supports children, it should embed `Children` with proper json and xml tags for their correct marshalling
+  and unmarshalling. Example -
+  ```go
+  type Para struct {
+    Children `json:"children" xml:",any"`
+  }
+  ```
 
-    <panel type="info" label="INFO">
-        <text>Some Text</text>
-        <link href="https://www.google.com/somelink">Some Link</link>
-        <text>some other text</text>
-    </panel>
+- Custom element specific Marshal/Unmarshal - To customize the JSON and XML marshalling and unmarshalling, in new
+  element implement/satisfy any or all of -
+  - `json.Marshaller`
+  - `json.Unmarshaller`
+  - `xml.Marshaller`
+  - `xml.Unmarshaller`
 
-    <img href="" size="default" align="center" file="">
-        <!-- if href set, on click will open that in new tab, else original image will show in popup -->
-        <src-set>
-            <src type="thumb" src="http://some.image.url/path/image.jpg" />
-            <!-- todo: define a general size for web view considering responsive and popular resolutions including mobile/tab -->
-            <src type="sm" src="http://some.image.url/path/image.jpg" />
-            <src type="md" src="http://some.image.url/path/image.jpg" />
-            <src type="lg" src="http://some.image.url/path/image.jpg" />
-            <src type="orig" src="http://some.image.url/path/image.jpg" />
-        </src-set>
-        <caption>
-            <!-- only text with marking supported. No link or code -->
-            <text bold="true">This is an example</text>
-            <text>caption</text>
-        </caption>
-    </img>
+  If element doesn't satisfy any, the default behaviour is implied, which is purely based on struct tags in struct
+  fields (`json` or `xml`)
+  
 
-    <media-list as="carousal|grid">
-        <!-- tbd: -->
-        <items>
-            <img>
-                <!-- img data here -->
-            </img>
-            <video>
-
-            </video>
-
-        </items>
-    </media-list>
-
-    <file filetype="">
-        <thumb src="" dim="100x100"/>
-    </file>
-
-    <list type="ordered" bullet="checkmark">
-        <item>
-            <text></text>
-            <link href="">
-                <text></text>
-            </link>
-            <text></text>
-        </item>
-    </list>
-
-    <list type="checklist">
-        <item checked="true">
-            <text>Some text</text>
-        </item>
-    </list>
-
-    <table borders="true" striped="false" width="compact|full">
-        <tr head="true">
-            <td>
-
-            </td>
-            <td></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td></td>
-        </tr>
-    </table>
-
-
-
-    <p>
-        <link as="text|button|outline" outline="">
-            <text>Some text</text>
-        </link>
-    </p>
-</page>
-```
