@@ -1,18 +1,3 @@
-# xdoc
-
-Structured Document Content Schema implementation
-
-## Implemented Elements
-
-### Page `<page />`
-
-### Title `<title />`
-
-### Paragraph `<para />`
-
-## Schema
-
-```
 <page type="article" version="1" lang="en" state="draft">
     <title>Always inner text without formatting</title>
     <summary display="off">
@@ -31,23 +16,23 @@ Structured Document Content Schema implementation
     </h2>
 
     <h3 ruler="false">
-        <text>Inner Text </text>
+        <text>Inner Text</text>
         <link href="">Some link</link>
     </h3>
 
     <p>
         <!-- paragraph can contain one or more text, link or inline code node -->
-        <text bold="true" italics="true" underline="false" strikethrough="false">This is  bold and italics text</text>
+        <text bold="true" italics="true" underline="false" strikethrough="false">This is bold and italics text</text>
         <text>with an unformatted text</text>
         <link href="http://www.somewhere.com/">
             <text>and a Link text</text>
         </link>
-        <kbd> and keyboard</kbd>
+        <kbd>and keyboard</kbd>
     </p>
     <p>
-        <text>Some </text>
+        <text>Some</text>
         <text bold="true">Very Important</text>
-        <text> text</text>
+        <text>text</text>
     </p>
 
     <panel type="info" label="INFO">
@@ -59,12 +44,12 @@ Structured Document Content Schema implementation
     <img href="" size="default" align="center" file="">
         <!-- if href set, on click will open that in new tab, else original image will show in popup -->
         <src-set>
-            <src type="thumb" src="http://some.image.url/path/image.jpg" />
+            <src type="thumb" src="http://some.image.url/path/image.jpg"/>
             <!-- todo: define a general size for web view considering responsive and popular resolutions including mobile/tab -->
-            <src type="sm" src="http://some.image.url/path/image.jpg" />
-            <src type="md" src="http://some.image.url/path/image.jpg" />
-            <src type="lg" src="http://some.image.url/path/image.jpg" />
-            <src type="orig" src="http://some.image.url/path/image.jpg" />
+            <src type="sm" src="http://some.image.url/path/image.jpg"/>
+            <src type="md" src="http://some.image.url/path/image.jpg"/>
+            <src type="lg" src="http://some.image.url/path/image.jpg"/>
+            <src type="orig" src="http://some.image.url/path/image.jpg"/>
         </src-set>
         <caption>
             <!-- only text with marking supported. No link or code -->
@@ -120,11 +105,9 @@ Structured Document Content Schema implementation
     </table>
 
 
-
     <p>
         <link as="text|button|outline" outline="">
             <text>Some text</text>
         </link>
     </p>
 </page>
-```
