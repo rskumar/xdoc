@@ -39,45 +39,6 @@ func (p *Page) CanContain(e Element) bool {
 	return IsValidParent(p.GetType(), e.GetType())
 }
 
-/*type pageStruct struct {
-	Type     string    `json:"type"`
-	Version  string    `json:"version"`
-	Lang     string    `json:"lang"`
-	Children []Element `json:"children"`
-}
-
-func (p *Page) MarshalJSON() ([]byte, error) {
-	v := pageStruct{
-		p.GetType(),
-		strconv.Itoa(p.Version),
-		p.Lang,
-		p.node.ChildElements(),
-	}
-	return json.Marshal(v)
-}
-
-func (p *Page) UnmarshalJSON(data []byte) error {
-	v := &pageStruct{}
-	err := json.Unmarshal(data, v)
-	if err != nil {
-		return err
-	}
-	if v.Type != TypePage {
-		return ErrInvalidElementType
-	}
-	ver, err := strconv.Atoi(v.Version)
-	if err != nil {
-		return err
-	}
-	p.Version = ver
-	p.Lang = v.Lang
-	err = p.AppendChildElement(v.Children...)
-	if err != nil {
-		return err
-	}
-	return nil
-}*/
-
 func NewPage() *Page {
 	v := &Page{}
 	return v
@@ -85,7 +46,7 @@ func NewPage() *Page {
 
 // Title node
 type Title struct {
-	Children `json:"children"`
+	Children `json:"children" xml:",any"`
 }
 
 func (t *Title) GetType() string {
@@ -98,36 +59,6 @@ func (t *Title) CanContain(e Element) bool {
 	}
 	return IsValidParent(t.GetType(), e.GetType())
 }
-
-/*type titleStruct struct {
-	Type     string    `json:"type"`
-	Children []Element `json:"children"`
-}
-
-func (t *Title) MarshalJSON() ([]byte, error) {
-	v := titleStruct{
-		t.GetType(),
-		t.node.ChildElements(),
-	}
-	return json.Marshal(v)
-}
-
-func (t *Title) UnmarshalJSON(data []byte) error {
-	v := &titleStruct{}
-	err := json.Unmarshal(data, v)
-	if err != nil {
-		return err
-	}
-
-
-	p.Version = ver
-	p.Lang = v.Lang
-	err = p.AppendChildElement(v.Children...)
-	if err != nil {
-		return err
-	}
-	return nil
-}*/
 
 func NewTitle() *Title {
 	v := &Title{}
@@ -181,9 +112,9 @@ func NewText() *Text {
 }
 
 type Link struct {
-	Href  string
-	Title string
-	Children
+	Href     string `json:"href,omitempty" xml:"href,attr,omitempty"`
+	Title    string `json:"title,omitempty" xml:"title,attr,omitempty"`
+	Children `json:"children" xml:",any"`
 }
 
 func (Link) GetType() string {
