@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"encoding/xml"
-	"fmt"
 	"github.com/cockroachdb/errors"
 	"strings"
 )
@@ -286,7 +285,6 @@ func (n *Node) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 }
 
 func (n *Node) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	fmt.Println("Start: ", start.Name.Local)
 	nodeTyp := start.Name.Local
 	var elem Element
 
