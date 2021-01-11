@@ -111,6 +111,11 @@ var schema = map[string]NodeInfo{
 		},
 		Ctor: linkCtor,
 	},
+	TypeText: {
+		Type:         TypeText,
+		AllowedChild: []string{},
+		Ctor:         textCtor,
+	},
 }
 
 // GetValidParentsFor returns slice of parents which can contain `n` as child
