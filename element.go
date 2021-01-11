@@ -27,3 +27,16 @@ type Normalizer interface {
 }*/
 
 // Types defined
+
+func NewElementForType(typ string) (Element, error) {
+	nodeInfo, ok := schema[typ]
+	if !ok {
+		return nil, errors.Wrapf(ErrInvalidElementType, "element type '%s' not registered")
+	}
+	if nodeInfo.Ctor == nil {
+		return nil, errors.Newf("element constructor for '%s' not registered", nodeInfo.Type)
+	}
+
+	elem := nodeInfo.Ctor()
+	return elem, nil
+}

@@ -218,18 +218,6 @@ func (n *Node) MarshalJSON() ([]byte, error) {
 		}
 	}
 
-	//jElem, err := json.Marshal(n.Element)
-	/*v := make(map[string]interface{})
-	err := mapstructure.Decode(n.Element, &v)
-	if err != nil {
-		return nil, err
-	}
-	typ := n.Element.GetType()
-	if typ != "text" {
-		v["type"] = typ
-	}*/
-	//v := typedNode{Element: n.Element, Type: n.Element.GetType()}
-	//return json.Marshal(v)
 	return jElem, nil
 }
 
@@ -240,25 +228,19 @@ func (n *Node) UnmarshalJSON(data []byte) error {
 		Text *string `json:"text"`
 	}{}
 	err = json.Unmarshal(data, vt)
-	var nodeTyp = vt.Type
-	if strings.TrimSpace(nodeTyp) == "" && vt.Text != nil {
+	var elemTyp = vt.Type
+	if strings.TrimSpace(elemTyp) == "" && vt.Text != nil {
 		// its text type
-		nodeTyp = TypeText
+		elemTyp = TypeText
 	}
 
-	var elem Element
-	switch nodeTyp {
-	case TypePage:
-		elem = NewPage()
-	case TypeTitle:
-		elem = NewTitle()
-	case TypePara:
-		elem = NewParagraph()
-	case TypeText:
-		elem = NewText()
-	case TypeLink:
-		elem = NewLink()
-	default:
+	elem, err := NewElementForType(elemTyp)
+	if err != nil {
+		// todo: what should be lenient approach for unregistered/unknown elements
+		// panic - for developers, so they include it
+		// error throw in case bad input sources feed wrong xml at runtime, which should be discarded
+		// yet to decide which way to go
+		panic(err)
 	}
 	err = json.Unmarshal(data, elem)
 	if err != nil {
@@ -300,23 +282,18 @@ func (n *Node) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 }
 
 func (n *Node) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	nodeTyp := start.Name.Local
+	elemTyp := start.Name.Local
 	var elem Element
-
-	switch nodeTyp {
-	case TypePage:
-		elem = NewPage()
-	case TypeTitle:
-		elem = NewTitle()
-	case TypePara:
-		elem = NewParagraph()
-	case TypeText:
-		elem = NewText()
-	case TypeLink:
-		elem = NewLink()
-	default:
+	elem, err := NewElementForType(elemTyp)
+	if err != nil {
+		// todo: what should be lenient approach for unregistered/unknown elements
+		// panic - for developers, so they include it
+		// error throw in case bad input sources feed wrong xml at runtime, which should be discarded
+		// yet to decide which way to go
+		panic(err)
 	}
-	err := d.DecodeElement(elem, &start)
+
+	err = d.DecodeElement(elem, &start)
 	if err != nil {
 		return err
 	}
