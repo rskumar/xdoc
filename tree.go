@@ -35,6 +35,7 @@ type NodeAccessor interface {
 type ChildContainer interface {
 	append(*Node)
 	GetChildren() []*Node
+	Len() int
 }
 
 type Children []*Node
@@ -45,6 +46,10 @@ func (c *Children) append(n *Node) {
 
 func (c *Children) GetChildren() []*Node {
 	return *c
+}
+
+func (c *Children) Len() int {
+	return len(*c)
 }
 
 type Node struct {
@@ -68,7 +73,8 @@ func (n Node) NumChild() int {
 	if n.Element != nil {
 		// if element has child container embedded
 		if container, ok := n.Element.(ChildContainer); ok {
-			return len(container.GetChildren())
+			//return len(container.GetChildren())
+			return container.Len()
 		}
 	}
 	return 0

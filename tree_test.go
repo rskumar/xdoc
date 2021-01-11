@@ -47,4 +47,27 @@ func Test_ValidXML_Short(t *testing.T) {
 	}
 	assert.NotNil(t, n, "non nil *Node should be returned")
 
+	// root node's parent should be nil
+	assert.Nil(t, n.parent, "top node parent should be nil")
+	assert.False(t, n.HasParent(), "root node should not have parent")
+
+	assert.Equal(t, 2, n.NumChild(), "children count should be 2")
+
+	// first node should have page element type
+	assert.Equal(t, TypePage, n.Element.GetType(), "root element type should be page")
+
+	// root node's child should be title and p
+	rootChildTypes := []string{
+		// NOTE: order of types MUST be as defined in XML
+		TypeTitle, TypePara,
+	}
+
+	if rc, found := n.Element.(ChildContainer); found {
+		for idx, c := range rc.GetChildren() {
+			assert.Equalf(t, rootChildTypes[idx], c.Element.GetType(), "page's children element type not in order")
+		}
+	} else {
+		t.Error("page should contain children")
+	}
+
 }
