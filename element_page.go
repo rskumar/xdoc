@@ -32,3 +32,7 @@ func NewPage() *Page {
 	v := &Page{}
 	return v
 }
+
+func pageCtor() Element {
+	return NewPage()
+}

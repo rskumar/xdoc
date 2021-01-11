@@ -1,5 +1,7 @@
 package xdoc
 
+import "github.com/cockroachdb/errors"
+
 const (
 	TypeNone       = ""
 	TypePage       = "page"
@@ -29,9 +31,16 @@ func IsValidNode(n string) bool {
 	return false
 }
 
+type ctor func() Element
+
+func nilCtor() Element {
+	panic(errors.New("Not implemented"))
+}
+
 type NodeInfo struct {
 	Type         string
 	AllowedChild []string
+	Ctor         ctor
 }
 
 var schema = map[string]NodeInfo{
@@ -47,12 +56,14 @@ var schema = map[string]NodeInfo{
 			TypeList,
 			TypeImage,
 		},
+		Ctor: pageCtor,
 	},
 	TypeTitle: {
 		Type: TypeTitle,
 		AllowedChild: []string{
 			TypeText,
 		},
+		Ctor: titleCtor,
 	},
 	TypeH1: {
 		Type: TypeH1,
@@ -60,6 +71,7 @@ var schema = map[string]NodeInfo{
 			TypeText,
 			TypeLink,
 		},
+		Ctor: nilCtor,
 	},
 	TypeH2: {
 		Type: TypeH2,
@@ -67,6 +79,7 @@ var schema = map[string]NodeInfo{
 			TypeText,
 			TypeLink,
 		},
+		Ctor: nilCtor,
 	},
 	TypeH3: {
 		Type: TypeH3,
@@ -74,12 +87,14 @@ var schema = map[string]NodeInfo{
 			TypeText,
 			TypeLink,
 		},
+		Ctor: nilCtor,
 	},
 	TypeBlockquote: {
 		Type: TypeBlockquote,
 		AllowedChild: []string{
 			TypeText,
 		},
+		Ctor: nilCtor,
 	},
 	TypePara: {
 		Type: TypePara,
@@ -87,12 +102,14 @@ var schema = map[string]NodeInfo{
 			TypeText,
 			TypeLink,
 		},
+		Ctor: paragraphCtor,
 	},
 	TypeLink: {
 		Type: TypeLink,
 		AllowedChild: []string{
 			TypeText,
 		},
+		Ctor: linkCtor,
 	},
 }
 

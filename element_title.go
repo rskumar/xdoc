@@ -26,3 +26,7 @@ func NewTitle() *Title {
 	v := &Title{}
 	return v
 }
+
+func titleCtor() Element {
+	return NewTitle()
+}

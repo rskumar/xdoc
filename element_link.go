@@ -20,3 +20,7 @@ func (l *Link) CanContain(e Element) bool {
 func NewLink() *Link {
 	return &Link{}
 }
+
+func linkCtor() Element {
+	return NewLink()
+}

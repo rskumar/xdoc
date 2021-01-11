@@ -34,3 +34,7 @@ func NewText() *Text {
 	v := &Text{}
 	return v
 }
+
+func textCtor() Element {
+	return NewText()
+}

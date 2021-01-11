@@ -20,3 +20,7 @@ func NewParagraph() *Paragraph {
 	v := &Paragraph{}
 	return v
 }
+
+func paragraphCtor() Element {
+	return NewParagraph()
+}
